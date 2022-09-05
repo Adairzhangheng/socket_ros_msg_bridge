@@ -1,0 +1,4 @@
+<launch>
+    <rosparam command="load" file="$(find srmb)/config/srmb.yaml" />
+    <node pkg="srmb" type="srmbtestpub" name="pubbbb" output="screen" />
+</launch>
