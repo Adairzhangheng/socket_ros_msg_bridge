@@ -15,14 +15,14 @@ int main(int argc, char **argv)
 	ss << "Hello!";
 	msg.data = ss.str();
         
-     if (SRMB.init_client(0) == false)
+     if (SRMB.init_client(1) == false)
 	{
 		ROS_INFO("srmb init client:0 error");
 	}
 	ros::Rate loop_rate(10);
     while(ros::ok())
 	{
-		SRMB.client_send<std_msgs::String>(msg,"testmsg","String",0);
+		SRMB.client_send<std_msgs::String>(msg,"testmsg","String",1);
 		loop_rate.sleep();
    }
 	return 0;

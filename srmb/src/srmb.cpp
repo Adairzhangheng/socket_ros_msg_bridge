@@ -137,14 +137,18 @@ void srmb::server_recv_thread()
                         for(int length = 0;Pay_loadLen != 0;length += recvlen)
                         {
                             recvlen =  recv(srmb::client_fds[i], srmb::ReceiveBuff, BUFFER_SIZE, 0);
+                            if  ( recvlen == 0)
+                            {
+                                break;
+                            }
                             Pay_loadLen = Pay_loadLen - recvlen;
                             memcpy(srmb::server_recv_buffer+length, srmb::ReceiveBuff, recvlen);
                             memset(srmb::ReceiveBuff, 0, sizeof(ReceiveBuff));	
                         }
-
+                        //printf("recvlen:%d\n",recvlen); 
                         if (recvlen > 0)  
                         { 
-                            if(recvlen == BUFFER_SIZE)  
+                            if(Pay_loadLen == 0)  
                             {  
                                 uint32_t serial_size;
                                 memcpy(srmb::name_buffer, srmb::server_recv_buffer, NAME_SIZE * sizeof(char));
@@ -168,6 +172,8 @@ void srmb::server_recv_thread()
                             srmb::client_fds[i] = 0;  
                             printf("客户端(%d)退出了\n", i);  
                         }  
+
+
                     }  
                 }  
             }  
