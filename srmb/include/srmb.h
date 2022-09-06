@@ -41,16 +41,18 @@ public:
     std::string ip[CON_MAX];
     int self_id;
     int cluster_num;
+    int  Pay_loadLen = BUFFER_SIZE;
+    int  recvlen = 0;
     int  port[CON_MAX];
     char clien_send_buffer[BUFFER_SIZE];
     char server_recv_buffer[BUFFER_SIZE];
+    char ReceiveBuff[BUFFER_SIZE];
     char name_buffer[NAME_SIZE];
     char type_buffer[TYPE_SIZE];
 //*************用户接口***********************//
     bool init_server();
     void server_recv_thread();
     bool init_client(int id);
-
 
     template<typename T>
     void client_send(T msg,std::string  name,std::string  type,int id)

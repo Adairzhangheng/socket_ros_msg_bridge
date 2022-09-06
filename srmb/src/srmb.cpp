@@ -130,10 +130,21 @@ void srmb::server_recv_thread()
                         bzero(srmb::server_recv_buffer, BUFFER_SIZE);  
                         bzero(srmb::name_buffer, NAME_SIZE); 
                         bzero(srmb::type_buffer, TYPE_SIZE);  
-                        long byte_num = recv(srmb::client_fds[i], srmb::server_recv_buffer, BUFFER_SIZE, 0);  
-                        if (byte_num > 0)  
+                        bzero(srmb::ReceiveBuff, BUFFER_SIZE);  
+                        recvlen = 0;
+                        Pay_loadLen = BUFFER_SIZE;
+                        
+                        for(int length = 0;Pay_loadLen != 0;length += recvlen)
+                        {
+                            recvlen =  recv(srmb::client_fds[i], srmb::ReceiveBuff, BUFFER_SIZE, 0);
+                            Pay_loadLen = Pay_loadLen - recvlen;
+                            memcpy(srmb::server_recv_buffer+length, srmb::ReceiveBuff, recvlen);
+                            memset(srmb::ReceiveBuff, 0, sizeof(ReceiveBuff));	
+                        }
+
+                        if (recvlen > 0)  
                         { 
-                            if(byte_num == BUFFER_SIZE)  
+                            if(recvlen == BUFFER_SIZE)  
                             {  
                                 uint32_t serial_size;
                                 memcpy(srmb::name_buffer, srmb::server_recv_buffer, NAME_SIZE * sizeof(char));
@@ -147,7 +158,7 @@ void srmb::server_recv_thread()
                                 }
                             }
                         }  
-                        else if(byte_num < 0)  
+                        else if(recvlen < 0)  
                         {  
                             printf("从客户端(%d)接受消息出错.\n", i);  
                         }  

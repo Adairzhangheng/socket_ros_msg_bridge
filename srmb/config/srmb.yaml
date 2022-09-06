@@ -12,7 +12,7 @@ remote_server_ip:
 
 server_port:
     port0:  9000
-    port1:  9011
+    port1:  9001
     port2:  9002
     port3:  9003
     port4:  9004
