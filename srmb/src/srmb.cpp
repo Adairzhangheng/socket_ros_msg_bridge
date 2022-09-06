@@ -35,6 +35,7 @@ bool srmb::init_client(int id)
     srmb::server_addr_remote[id].sin_family = AF_INET;  
     srmb::server_addr_remote[id].sin_port = htons(port[id]);  
     srmb::server_addr_remote[id].sin_addr.s_addr = inet_addr((srmb::ip[id]).c_str());  
+    
     bzero(&(srmb::server_addr_remote[id].sin_zero), 8);
     srmb::server_sock_fd_remote[id] = socket(AF_INET, SOCK_STREAM, 0);  
     if(srmb::server_sock_fd_remote[id] == -1)  
@@ -128,24 +129,22 @@ void srmb::server_recv_thread()
                         //处理某个客户端过来的消息  
                         bzero(srmb::server_recv_buffer, BUFFER_SIZE);  
                         bzero(srmb::name_buffer, NAME_SIZE); 
-                        bzero(srmb::name_buffer, TYPE_SIZE);  
+                        bzero(srmb::type_buffer, TYPE_SIZE);  
                         long byte_num = recv(srmb::client_fds[i], srmb::server_recv_buffer, BUFFER_SIZE, 0);  
                         if (byte_num > 0)  
-                        {  
-                            if(byte_num > BUFFER_SIZE)  
+                        { 
+                            if(byte_num == BUFFER_SIZE)  
                             {  
-                                byte_num = BUFFER_SIZE;  
-                            }  
-                            srmb::server_recv_buffer[byte_num] = '\0';  
-                            uint32_t serial_size;
-                            memcpy(srmb::name_buffer, srmb::server_recv_buffer, NAME_SIZE * sizeof(char));
-                            memcpy(srmb::type_buffer, srmb::server_recv_buffer + 50, TYPE_SIZE * sizeof(char));
-                            memcpy(&serial_size, srmb::server_recv_buffer + 100, sizeof(serial_size));
-                            std::vector<uint8_t> buffer(serial_size);
-                            memcpy(&buffer[0], srmb::server_recv_buffer + 104, buffer.size() * sizeof(uint8_t));
-                            if(srmb::server_unserialize_to_local(srmb::name_buffer , srmb::type_buffer, serial_size , buffer) == false)
-                            {
-                                printf("消息反序列化出错\n"); 
+                                uint32_t serial_size;
+                                memcpy(srmb::name_buffer, srmb::server_recv_buffer, NAME_SIZE * sizeof(char));
+                                memcpy(srmb::type_buffer, srmb::server_recv_buffer + 50, TYPE_SIZE * sizeof(char));
+                                memcpy(&serial_size, srmb::server_recv_buffer + 100, sizeof(serial_size));
+                                std::vector<uint8_t> buffer(serial_size);
+                                memcpy(&buffer[0], srmb::server_recv_buffer + 104, buffer.size() * sizeof(uint8_t));
+                                if(srmb::server_unserialize_to_local(srmb::name_buffer , srmb::type_buffer, serial_size , buffer) == false)
+                                {
+                                    printf("消息反序列化出错\n"); 
+                                }
                             }
                         }  
                         else if(byte_num < 0)  
@@ -223,7 +222,7 @@ void srmb::param_load()
     srmb::nh.param<std::string>("remote_server_ip/ip8",ip[8],"192.168.20.108");
     srmb::nh.param<std::string>("remote_server_ip/ip9",ip[9],"192.168.20.109");
     srmb::nh.param<int>("common/cluster_num",cluster_num,10);
-    srmb::nh.param<int>("common/sefl_id",self_id,0);
+    srmb::nh.param<int>("common/self_id",self_id,0);
 
 }
 

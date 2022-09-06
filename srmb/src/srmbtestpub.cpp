@@ -2,7 +2,7 @@
 #include "srmb.h"
 
 int main(int argc, char **argv)
-{mm 
+{ 
 	ros::init(argc,argv,"srmbtestpub");
 	ros::NodeHandle nh;
 	
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	{
 		ROS_INFO("srmb init client:0 error");
 	}
-	ros::Rate loop_rate(10);./././////
+	ros::Rate loop_rate(10);
     while(ros::ok())
 	{
 		SRMB.client_send<std_msgs::String>(msg,"testmsg","String",0);
